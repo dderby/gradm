@@ -381,6 +381,10 @@ IP [0-9]{1,3}"."[0-9]{1,3}"."[0-9]{1,3}"."[0-9]{1,3}
 					  gradmlval.string = gr_strdup(yytext);
 					  return PAX_NAME;
 					}
+[+-][a-z][_a-z0-9]+\(\)			{
+					  gradmlval.string = gr_strdup(yytext);
+					  return SC_NAME;
+					}
 "RES_"[A-Z]+				{
 					  BEGIN(RES_STATE);
 					  gradmlval.string = gr_strdup(yytext);

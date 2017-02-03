@@ -43,6 +43,8 @@
 // CAP_AUDIT_READ
 #define CAP_MAX			37
 
+#define SYSCALL_MAX		326
+
 #define MAX_INCLUDE_DEPTH	20
 #define MAX_NEST_DEPTH		8
 #define MAX_SYMLINK_DEPTH	8
@@ -138,6 +140,18 @@
 #define cap_raised(c, flag) ((c).cap[CAP_TO_INDEX(flag)] & CAP_TO_MASK(flag))
 #define CAP_SETUID 7
 #define CAP_SETGID 6
+
+#undef SYSCALL_TO_INDEX
+#undef SYSCALL_TO_MASK
+#undef syscall_raise
+#undef syscall_lower
+#undef syscall_raised
+#define SYSCALL_TO_INDEX(x)    ((x) >> 5)         /* 1 << 5 == bits in __u32 */
+#define SYSCALL_TO_MASK(x)     (1U << ((x) & 31)) /* mask for indexed __u32 */
+#define syscall_raise(sc, flag) ((sc).syscall[SYSCALL_TO_INDEX(flag)] |= SYSCALL_TO_MASK(flag))
+#define syscall_lower(sc, flag) ((sc).syscall[SYSCALL_TO_INDEX(flag)] &= ~SYSCALL_TO_MASK(flag))
+#define syscall_raised(sc, flag) ((sc).cap[CAP_TO_INDEX(flag)] & CAP_TO_MASK(flag))
+
 enum {
 	GRADM_DISABLE 	= 0,
 	GRADM_ENABLE 	= 1,
@@ -253,6 +267,10 @@ typedef struct _gr_cap_t {
 	u_int32_t cap[2];
 } gr_cap_t;
 
+typedef struct _gr_syscall_t {
+	u_int32_t syscall[12];
+} gr_syscall_t;
+
 struct capability_set {
 	const char *cap_name;
 	int cap_val;
@@ -266,6 +284,11 @@ struct family_set {
 struct paxflag_set {
 	const char *paxflag_name;
 	u_int16_t paxflag_val;
+};
+
+struct systemcall_set {
+	const char *syscall_name;
+	u_int16_t syscall_val;
 };
 
 struct rlimconv {
@@ -412,6 +435,9 @@ struct proc_acl {
 	struct file_acl **obj_hash;
 	u_int32_t obj_hash_size;
 	u_int16_t pax_flags;
+
+	gr_syscall_t syscall_mask;
+	gr_syscall_t syscall_drop;
 };
 
 struct gr_learn_ip_node {
@@ -612,6 +638,7 @@ struct gr_arg_wrapper {
 extern const char *rlim_table[GR_NLIMITS];
 extern struct capability_set capability_list[CAP_MAX+2];
 extern struct paxflag_set paxflag_list[5];
+extern struct systemcall_set systemcall_list[SYSCALL_MAX+2];
 extern struct family_set sock_families[AF_MAX+2];
 
 extern int is_24_kernel;
