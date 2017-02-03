@@ -48,6 +48,7 @@ int add_proc_object_acl(struct proc_acl *subject, const char *filename,
 void add_cap_acl(struct proc_acl *subject, const char *cap, const char *audit);
 void add_paxflag_acl(struct proc_acl *subject, const char *paxflag);
 void add_systemcall_acl(struct proc_acl *subject, const char *systemcall);
+void add_namespace_acl(struct proc_acl *subject, const char *namespace);
 void add_gradm_acl(struct role_acl *role);
 void add_gradm_pam_acl(struct role_acl *role);
 void add_grlearn_acl(struct role_acl *role);

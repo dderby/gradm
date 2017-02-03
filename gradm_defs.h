@@ -291,6 +291,11 @@ struct systemcall_set {
 	u_int16_t syscall_val;
 };
 
+struct namespace_set {
+	const char *namespace_name;
+	u_int32_t namespace_val;
+};
+
 struct rlimconv {
 	const char *name;
 	unsigned short val;
@@ -438,6 +443,8 @@ struct proc_acl {
 
 	gr_syscall_t syscall_mask;
 	gr_syscall_t syscall_drop;
+
+	u_int32_t namespaces;
 };
 
 struct gr_learn_ip_node {
@@ -639,6 +646,7 @@ extern const char *rlim_table[GR_NLIMITS];
 extern struct capability_set capability_list[CAP_MAX+2];
 extern struct paxflag_set paxflag_list[5];
 extern struct systemcall_set systemcall_list[SYSCALL_MAX+2];
+extern struct namespace_set namespace_list[6];
 extern struct family_set sock_families[AF_MAX+2];
 
 extern int is_24_kernel;
